@@ -49,28 +49,35 @@ class PermissionsManager extends Command
             ]);
             $this->info('permissions group created!');
         } else {
-            $groups = PermissionGroup::orderBy('group')->select('id','group')->get()->toArray();
-            $group_id = $this->choice('Please select the group for this permission',$groups,1);
+            $groups = PermissionGroup::orderBy('group')->get(['id','group'])->toArray();
+            $group_choice = [];
+            foreach($groups as $g){
+                $group_choice[] = $g["group"]."--".$g["id"];
+            }
+            
+            if(count($group_choice) == 0){
+                $this->error('No hay grupos de permisos cargados');
+                return false;
+            }
+            $group_id = $this->choice('Please select the group for this permission',$group_choice,0);
+            $group_id = explode('--',$group_id)[1];
         }
 
         if($tipo == 'RESTfull'){
-            $model = $this->ask('Please fill in the model class (including the namespace) ');
             $route = $this->ask('Please fill in the base route name for this model ');
             
             $restmethods = ['r'=>['index','show'], 'w' => ['edit','create','store','update','destroy']];
 
-            DB::transaction(function () use ($model,$route,$restmethods,$description,$group_id) {
+            DB::transaction(function () use ($route,$restmethods,$description,$group_id) {
                 foreach($restmethods as $rw=> $rmrw){
                     foreach($rmrw as $rm){
-                        $name = explode("\\",$model);
-
+                        
                         Permission::create([
                             "description" => $description,
-                            "permission"=> end($name).".".$rm,
-                            "model"=>$model,
+                            "permission"=> $route.".".$rm,
                             "route"=>$route.".".$rm,
                             "rw" => $rw,
-                            "group_id" => $group_id, 
+                            "permission_group_id" => $group_id, 
                         ]);
                     } 
                 }
@@ -91,7 +98,7 @@ class PermissionsManager extends Command
                             "permission"=> $name,
                             "route"=>$route,
                             "rw" => ($ro) ? 'r': 'w',
-                            "group_id" => $group_id, 
+                            "permission_group_id" => $group_id, 
                         ]);
             $this->info('permission created!');
         }
@@ -99,16 +106,13 @@ class PermissionsManager extends Command
         if($tipo == 'Custom'){
             $name = $this->ask('Please fill in the name for this permission ');
             
-            $route = $this->ask('Please fill in the route name for this permission');
-            $model = $this->ask('Please fill in the model class (including the namespace)');
             $ro = $this->confirm('Is this a read-only method?');
                     Permission::create([
                             "description" => $description,
                             "permission"=> $name,
-                            "model"=>$model,
-                            "route"=>$route,
+                            "route"=>"",
                             "rw" => ($ro) ? 'r': 'w',
-                            "group_id" => $group_id,
+                            "permission_group_id" => $group_id,
                         ]);
             $this->info('permission created!');
         }

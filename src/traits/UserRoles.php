@@ -33,14 +33,14 @@ trait UserRole {
 	public function setActiveRole($role_id){
 		//check if user has role
 		if(!$this->hasRoleId($role_id)){
-			abort(401,'Acción no autorizadaq');
+			abort(401,'Acción no autorizada');
 		}
 		//set active role in session
 		session(['role_id' => $role_id]);
 	}
 
 	public function getActiveRole(){
-		$role_id = session('role_id');//,$this->roles()->first()->id);
+		$role_id = session('role_id',$this->roles()->first()->id);
 		//check if user has role
 		if(!$this->hasRoleId($role_id)){
 			abort(401,'Acción no autorizada');
