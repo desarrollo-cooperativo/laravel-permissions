@@ -1,0 +1,23 @@
+{
+    "name": "cardumen/laravel-permissions",
+    "description": "Roles and Permissions for Laravel users",
+    "keywords": ["roles","users","permissions"],
+    "homepage": "https://github.com/desarrollo-cooperativo/laravel-permissions",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrés Teszkiewikcz @ Cardumen",
+            "email": "ateszki@gmail.com",
+            "homepage": "http://cardumen.com.ar",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+			"php": ">=7.1.0"
+            },
+    "autoload": {
+        "psr-4": {
+            "Cardumen\\LaravelPermissions\\": "src/"
+        }
+    }
+}
