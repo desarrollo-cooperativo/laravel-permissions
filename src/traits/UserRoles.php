@@ -27,7 +27,7 @@ trait UserRole {
 	}
 	
 	public function permissionAllowed($name){
-		return ($this->is_root()) ? true : ($this->permissions()->where('permissions.name','=',$name)->count() > 0);
+		return ($this->is_root()) ? true : ($this->permissions()->where('permissions.permission','=',$name)->count() > 0);
 	}
 
 	public function setActiveRole($role_id){
